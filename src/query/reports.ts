@@ -236,7 +236,10 @@ export const reportsFns = {
       if (r.payment_status === "Completed") paid += r.receipts?.amount || 0;
       total += r.installment_amount || 0;
     });
-    return { paidPercent: (paid / total) * 100, list: result };
+    return {
+      paidPercent: total === 0 ? 0 : (paid / total) * 100,
+      list: result,
+    };
   },
   getPendingRegisteration: async () => {
     const { data, error } = await supabase
@@ -265,7 +268,7 @@ export const reportsFns = {
         return obj;
       });
 
-    const paidPercent = (paid / total) * 100;
+    const paidPercent = total === 0 ? 0 : (paid / total) * 100;
 
     return { paidPercent, list: result };
   },
