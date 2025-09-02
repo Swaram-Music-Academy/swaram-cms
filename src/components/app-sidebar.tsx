@@ -9,7 +9,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import HeroBrand from "./hero-brand";
@@ -105,7 +104,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </React.Fragment>
         ))}
       </SidebarContent>
-      <SidebarRail />
     </Sidebar>
   );
 }

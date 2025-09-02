@@ -433,21 +433,23 @@ export default function Students() {
   ];
   return (
     <>
-      <div className="flex items-center mb-8 gap-4">
-        <h1 className="text-3xl font-semibold">Students</h1>
-        <Input
-          onChange={(e) => setSearchQuery(e.currentTarget.value)}
-          className="ml-auto max-w-72"
-          placeholder="Search Records"
-        />
-        <Button
-          onClick={() => navigate("add")}
-          className=""
-          variant={"default"}
-        >
-          <PlusIcon />
-          New Registeration
-        </Button>
+      <div className="flex flex-col md:flex-row md:items-center mb-8 gap-4">
+        <h1 className="flex-1 text-3xl font-semibold">Students</h1>
+        <div className="flex flex-col-reverse md:flex-row gap-2 md:gap-4 md:ml-auto">
+          <Input
+            onChange={(e) => setSearchQuery(e.currentTarget.value)}
+            className="w-full md:max-w-72"
+            placeholder="Search Records"
+          />
+          <Button
+            onClick={() => navigate("add")}
+            className=""
+            variant={"default"}
+          >
+            <PlusIcon />
+            New Registeration
+          </Button>
+        </div>
       </div>
       {isLoading ? (
         <Loader />
@@ -462,7 +464,7 @@ export default function Students() {
           )}
           {/* Popup below the table */}
           {selectedIds.size > 0 && (
-            <div className="fixed bg-background bottom-4 left-1/2 transform -translate-x-1/2 z-50 rounded-md shadow-md px-4 py-2 border border-border flex items-center gap-2 text-sm">
+            <div className="fixed bg-card bottom-4 left-1/2 transform -translate-x-1/2 z-50 rounded-md shadow-md px-4 py-2 border border-border flex items-center gap-2 text-sm">
               <p className="mr-8">
                 {selectedIds.size} record{selectedIds.size !== 1 && "s"}{" "}
                 selected

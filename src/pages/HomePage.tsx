@@ -83,8 +83,8 @@ export default function HomePage() {
           ))}
         </div>
       </div>
-      <div className="flex flex-col md:flex-row grid-cols-1 items-stretch gap-4 mt-8">
-        <Card className="sm:w-full md:w-1/2 lg:w-1/4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-stretch gap-4 mt-8">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <p className="text-muted-foreground">Total Students</p>
@@ -101,7 +101,7 @@ export default function HomePage() {
             )}
           </CardContent>
         </Card>
-        <Card className="sm:w-full md:w-1/2 lg:w-1/4">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <p className="text-muted-foreground">Total Courses</p>
@@ -118,7 +118,7 @@ export default function HomePage() {
             )}
           </CardContent>
         </Card>
-        <Card className="sm:w-full md:w-1/2 lg:w-1/4">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <p className="text-muted-foreground">Total Batches</p>
@@ -135,7 +135,7 @@ export default function HomePage() {
             )}
           </CardContent>
         </Card>
-        <Card className="sm:w-full md:w-1/2 lg:w-1/4">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <p className="text-muted-foreground">Total Enrollments</p>
