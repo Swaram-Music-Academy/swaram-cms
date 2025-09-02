@@ -114,7 +114,7 @@ const router = createBrowserRouter([
               {
                 path: "pending-registeration",
                 index: true,
-                element: <PendingRegisterationFees   />,
+                element: <PendingRegisterationFees />,
               },
             ],
           },
