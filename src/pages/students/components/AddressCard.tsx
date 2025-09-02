@@ -18,7 +18,7 @@ export default function AddressCard({
         <h3 className="text-2xl font-medium">Address Details</h3>
       </CardHeader>
       <CardContent>
-        <div className="max-w-[50%] grid grid-cols-6 gap-4">
+        <div className="lg:max-w-[50%] grid grid-cols-6 gap-4">
           <div className="col-span-1 flex flex-col gap-2">
             <Label htmlFor="unit">Unit</Label>
             <Input

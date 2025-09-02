@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -45,9 +46,9 @@ export default function DataTable<TData, TValue>({
   });
 
   return (
-    <div className={className}>
+    <div className={cn(className, "max-w-[calc(100%)]")}>
       <div className="rounded-md border">
-        <Table>
+        <Table className="overflow-scroll">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

@@ -46,8 +46,8 @@ export default function FeeReports() {
                     Registration Fees
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-[2fr_4fr] xl:grid-cols-[1fr_2fr_4fr] gap-8">
-                  <div className="flex flex-col gap-4">
+                <CardContent className="grid grid-cols-1 md:grid-cols-[2fr_4fr] xl:grid-cols-[1fr_2fr_4fr] gap-8">
+                  <div className="grid grid-cols-2 md:grid-cols-1 gap-4">
                     <Metric
                       label="Total Amount"
                       value={`₹${formatNumberIndian(data.registeration.total)}`}
@@ -86,7 +86,7 @@ export default function FeeReports() {
                   ) : (
                     <MonthlyChart
                       data={charts!.registeration}
-                      className="col-span-2 xl:col-span-1"
+                      className="md:col-span-2 xl:col-span-1"
                     />
                   )}
                 </CardContent>
@@ -98,8 +98,8 @@ export default function FeeReports() {
                     Installment Fees
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-[2fr_4fr] xl:grid-cols-[1fr_2fr_4fr] gap-8">
-                  <div className="flex flex-col gap-4">
+                <CardContent className="grid grid-cols-1 md:grid-cols-[2fr_4fr] xl:grid-cols-[1fr_2fr_4fr] gap-8">
+                  <div className="grid grid-cols-2 md:grid-cols-1 gap-4">
                     <Metric
                       label="Total Amount"
                       value={`₹${formatNumberIndian(data.installments.total)}`}
@@ -139,7 +139,7 @@ export default function FeeReports() {
                   ) : (
                     <MonthlyChart
                       data={charts!.installments}
-                      className="col-span-2 xl:col-span-1"
+                      className="md:col-span-2 xl:col-span-1"
                     />
                   )}
                 </CardContent>
