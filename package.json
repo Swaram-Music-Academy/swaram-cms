@@ -8,7 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "db:pull": "bash scripts/db-pull.sh"
+    "db:pull": "bash scripts/db-pull.sh",
+    "db:seed-local": "bash scripts/seed-sanitized.sh",
+    "dev:up": "bash scripts/dev-up.sh",
+    "dev:up:seed": "bash scripts/dev-up.sh --seed",
+    "dev:down": "bash scripts/dev-down.sh"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
