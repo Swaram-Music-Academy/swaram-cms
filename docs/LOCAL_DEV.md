@@ -92,11 +92,15 @@ This pulls production data and replaces all sensitive fields:
 | `users`      | `name`                                                  |
 | `auth.users` | `email`, `encrypted_password`, `phone`, tokens          |
 
-After seeding, all auth users have:
+After seeding, sanitized production auth users have:
 - **Email:** `dev_<uuid-prefix>@example.com`
 - **Password:** `password123`
 
-To find a login:
+The seed script also ensures a stable local dev login exists:
+- **Email:** `jeetpatel1011@gmail.com`
+- **Password:** `password`
+
+To find available logins:
 ```bash
 docker exec supabase_db_swaram-software psql -U postgres -d postgres \
   -c "SELECT email FROM auth.users LIMIT 5;"

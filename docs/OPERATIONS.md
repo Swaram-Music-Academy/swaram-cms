@@ -205,8 +205,10 @@ The plan is to create a configuration UI where the admin can set:
 
 - Auto-created when a student record is inserted (trigger: `add_registration_fee_on_student_insert`).
 - Stored in `student_registeration_fees`.
-- Fixed amount (currently ₹1,500).
 - One-time fee — paid once when the student first joins, not per year or per course.
+- The amount is globally configurable from `/settings`.
+- The current setting is stored in `app_settings` under key `registration_fee`.
+- Updating the global registration fee only affects newly registered students. Existing registration fee records are preserved for historical accuracy.
 - Payment is recorded by creating a `receipts` row and updating `is_paid = true` + `receipt_id`.
 
 ---
