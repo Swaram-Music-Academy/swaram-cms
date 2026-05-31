@@ -61,6 +61,10 @@ const data: { navMain: NavGroup[] } = {
           url: "/batches",
         },
         {
+          title: "Year Promotion",
+          url: "/promotions",
+        },
+        {
           title: "Time Table",
           url: "/time-table",
         },
