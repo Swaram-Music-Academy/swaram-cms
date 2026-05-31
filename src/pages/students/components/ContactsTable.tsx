@@ -22,6 +22,8 @@ import { QueryData } from "@supabase/supabase-js";
 import { Edit, SaveIcon, Trash, X } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { PhoneInput } from "@/components/ui/phone-input";
+import type { Value as PhoneValue } from "react-phone-number-input";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const contactsQuery = supabase
@@ -366,14 +368,14 @@ export default function ContactsTable({
                     <TableCell>
                       {isEditingContact &&
                       editingContactId === studentContact.id ? (
-                        <Input
+                        <PhoneInput
+                          defaultCountry="IN"
                           placeholder="Phone Number"
-                          type="tel"
-                          value={editingContact.phone}
-                          onChange={(e) =>
+                          value={editingContact.phone as PhoneValue}
+                          onChange={(value) =>
                             setEditingContact((prev) => ({
                               ...prev,
-                              phone: e.currentTarget.value,
+                              phone: (value || "") as string,
                             }))
                           }
                         />
@@ -386,20 +388,20 @@ export default function ContactsTable({
                     <TableCell>
                       {isEditingContact &&
                       editingContactId === studentContact.id ? (
-                        <Input
+                        <PhoneInput
+                          defaultCountry="IN"
                           placeholder="Whatsapp Number"
-                          type="tel"
-                          value={editingContact.whatsapp}
-                          onChange={(e) =>
+                          value={editingContact.whatsapp as PhoneValue}
+                          onChange={(value) =>
                             setEditingContact((prev) => ({
                               ...prev,
-                              whatsapp: e.currentTarget.value,
+                              whatsapp: (value || "") as string,
                             }))
                           }
                         />
                       ) : (
                         <a
-                          href={`https://wa.me/${studentContact.contacts.whatsapp_num}`}
+                          href={`https://wa.me/${studentContact.contacts.whatsapp_num?.replace(/^\+/, "")}`}
                         >
                           {studentContact.contacts.whatsapp_num || "-"}
                         </a>
@@ -513,28 +515,28 @@ export default function ContactsTable({
                 </TableCell>
                 <TableCell>
                   {/* Phone Number, Table: contacts */}
-                  <Input
+                  <PhoneInput
+                    defaultCountry="IN"
                     placeholder="Phone Number"
-                    type="tel"
-                    value={newContact.phone}
-                    onChange={(e) =>
+                    value={newContact.phone as PhoneValue}
+                    onChange={(value) =>
                       setNewContact((prev) => ({
                         ...prev,
-                        phone: e.currentTarget.value,
+                        phone: (value || "") as string,
                       }))
                     }
                   />
                 </TableCell>
                 <TableCell>
                   {/* Whatsapp Number, Table: contacts */}
-                  <Input
+                  <PhoneInput
+                    defaultCountry="IN"
                     placeholder="Whatsapp Number"
-                    type="tel"
-                    value={newContact.whatsapp}
-                    onChange={(e) =>
+                    value={newContact.whatsapp as PhoneValue}
+                    onChange={(value) =>
                       setNewContact((prev) => ({
                         ...prev,
-                        whatsapp: e.currentTarget.value,
+                        whatsapp: (value || "") as string,
                       }))
                     }
                   />
