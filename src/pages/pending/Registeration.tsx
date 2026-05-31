@@ -96,10 +96,7 @@ export default function PendingRegisterationFees() {
                 <CardContent className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-2xl">
-                      {data.paidPercent < 10
-                        ? data.paidPercent.toFixed(1)
-                        : data.paidPercent}
-                      % Collected
+                      {data.paidPercent.toFixed(2)}% Collected
                     </span>
                   </div>
                   <Progress value={data.paidPercent} />
