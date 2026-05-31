@@ -112,6 +112,33 @@ SELECT 'auth.users', COUNT(*),      COUNT(*) FILTER (WHERE email LIKE 'dev_%@exa
 
 SANITIZE_SQL
 
+# ---- Step 4b: Create dev user with known credentials ----
+echo ""
+echo "==> Step 4b: Ensuring dev user exists..."
+
+docker exec -i "$DB_CONTAINER" psql -U postgres -d postgres <<'DEV_USER_SQL'
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'jeetpatel1011@gmail.com') THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password,
+      email_confirmed_at, created_at, updated_at, confirmation_token, recovery_token
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      gen_random_uuid(), 'authenticated', 'authenticated',
+      'jeetpatel1011@gmail.com',
+      crypt('password', gen_salt('bf')),
+      NOW(), NOW(), NOW(), '', ''
+    );
+  ELSE
+    UPDATE auth.users
+    SET encrypted_password = crypt('password', gen_salt('bf'))
+    WHERE email = 'jeetpatel1011@gmail.com';
+  END IF;
+END
+$$;
+DEV_USER_SQL
+
 # ---- Step 5: Cleanup ----
 echo ""
 echo "==> Step 5/5: Cleaning up..."

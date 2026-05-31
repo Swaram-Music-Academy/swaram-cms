@@ -35,3 +35,6 @@ prod_data.sql
 
 # Docker dev volumes
 .docker/
+
+# Pi local agent files
+.pi/
