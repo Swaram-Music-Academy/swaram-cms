@@ -46,7 +46,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import FeeProgress from "./components/FeeProgress";
 import { enrollmentFns, enrollmentKeys } from "@/query/enrollments";
 import { Separator } from "@/components/ui/separator";
-import { studentKeys } from "@/query/students";
+
 
 type Installment = Tables<"student_installments">;
 
@@ -110,7 +110,7 @@ export default function FeeDetails() {
     queryFn: () => feeFns.getPaymentHistory(id!),
   });
   const { data: studentDetails, isLoading: studentLoading } = useQuery({
-    queryKey: studentKeys.getStudentById(id!),
+    queryKey: ["student-name", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("students")
@@ -142,7 +142,8 @@ export default function FeeDetails() {
     setFeePayload((prev) => ({ ...prev, [key]: value }));
   };
   const resetFeePayload = () => {
-    setRegPayload(initRegPayload);
+    setFeePayload(initFeePayload);
+    setInstallmentList([]);
   };
   const listInstallments = async (value: string) => {
     if (!enrollmentList) return;
@@ -347,7 +348,7 @@ export default function FeeDetails() {
         queryKey: feeKeys.getPaymentHistory(id!),
       }),
       queryClient.invalidateQueries({
-        queryKey: studentKeys.getStudentById(id!),
+        queryKey: ["student-name", id],
       }),
     ]);
   };
@@ -393,8 +394,9 @@ export default function FeeDetails() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            {/* Fee Sheet */}
-            <Sheet
+          </div>
+          {/* Fee Sheet */}
+          <Sheet
               open={feeSheetOpen}
               onOpenChange={(open) => {
                 setFeeSheetOpen(open);
@@ -510,7 +512,7 @@ export default function FeeDetails() {
                       <DatePicker
                         value={feePayload.payment_date!}
                         onValueChange={(value) =>
-                          regPayloadChange("payment_date", value)
+                          feePayloadChange("payment_date", value)
                         }
                       />
                     </div>
@@ -685,8 +687,7 @@ export default function FeeDetails() {
                   </div>
                 </SheetFooter>
               </SheetContent>
-            </Sheet>
-          </div>
+          </Sheet>
           <FeeProgress
             paidAmount={
               paymentHistory?.reduce(
@@ -720,7 +721,7 @@ export default function FeeDetails() {
                             <Badge variant={"outline"}>{r.fee_type}</Badge>
                           </TableCell>
                           <TableCell> {r.course || "-"} </TableCell>
-                          <TableCell> {r.course || "-"} </TableCell>
+                          <TableCell> {r.year || "-"} </TableCell>
                           <TableCell className="text-right">
                             ₹{r.amount}
                           </TableCell>
@@ -798,11 +799,11 @@ export default function FeeDetails() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-accent">
-                  <TableHead className="px-4">Paid on</TableHead>
+                  <TableHead className="px-4">Date</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Paid by</TableHead>
-                  <TableHead>Receipt</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -810,17 +811,25 @@ export default function FeeDetails() {
                   paymentHistory.map((record, i) => (
                     <TableRow key={i}>
                       <TableCell className="px-4">
-                        {format(record.paid_on!, "PPP")}
+                        {record.paid_on ? format(record.paid_on, "PPP") : "-"}
                       </TableCell>
                       <TableCell>{record.description}</TableCell>
-                      <TableCell>{record.amount}</TableCell>
-                      <TableCell>{record.paid_by}</TableCell>
+                      <TableCell>₹{record.amount}</TableCell>
+                      <TableCell>{record.paid_by || "-"}</TableCell>
                       <TableCell>
-                        <Button variant={"link"} className="p-0">
-                          <Link to={`/receipts/${record.receipt_url}`}>
-                            View Receipt
-                          </Link>
-                        </Button>
+                        {record.status === "paid" && record.receipt_url ? (
+                          <Button variant={"link"} className="p-0">
+                            <Link to={`/receipts/${record.receipt_url}`}>
+                              View Receipt
+                            </Link>
+                          </Button>
+                        ) : record.status === "overdue" ? (
+                          <Badge variant="destructive">Overdue</Badge>
+                        ) : record.status === "upcoming" ? (
+                          <Badge variant="secondary">Upcoming</Badge>
+                        ) : (
+                          "-"
+                        )}
                       </TableCell>
                     </TableRow>
                   ))

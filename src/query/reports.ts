@@ -169,7 +169,7 @@ export const reportsFns = {
         "payment_status, installment_amount, created_at, receipts(payment_date) "
       );
     if (regError) throw regError;
-    if (regError) throw instError;
+    if (instError) throw instError;
 
     // Aggregating Data
     // 3️⃣ Aggregate registration
