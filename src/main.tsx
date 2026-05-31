@@ -35,6 +35,7 @@ import PendingInstallments from "@/pages/pending/Installments";
 import PendingRegisterationFees from "@/pages/pending/Registeration";
 import Promotions from "@/pages/promotions/Promotions";
 import PromotionHistory from "@/pages/promotions/PromotionHistory";
+import Settings from "@/pages/Settings";
 
 const router = createBrowserRouter([
   {
@@ -124,6 +125,11 @@ const router = createBrowserRouter([
                   { index: true, element: <Promotions /> },
                   { path: "history", element: <PromotionHistory /> },
                 ],
+              },
+              {
+                path: "settings",
+                index: true,
+                element: <Settings />,
               },
             ],
           },

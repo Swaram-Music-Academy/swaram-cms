@@ -32,6 +32,10 @@ const data: { navMain: NavGroup[] } = {
           title: "Courses",
           url: "/courses",
         },
+        {
+          title: "Settings",
+          url: "/settings",
+        },
       ],
     },
     {
