@@ -237,7 +237,7 @@ export default function EditCourses() {
                               </SelectContent>
                             </Select>
                             <Select
-                              value={entry.year_number.toString()}
+                              value={(entry.year_number ?? 0).toString()}
                               onValueChange={(value) =>
                                 editCourseYear(value, index)
                               }
@@ -282,7 +282,7 @@ export default function EditCourses() {
                           </Select>
                           <Select
                             value={
-                              newCourseEntry.year_number === 0
+                              !newCourseEntry.year_number
                                 ? ""
                                 : newCourseEntry.year_number.toString()
                             }

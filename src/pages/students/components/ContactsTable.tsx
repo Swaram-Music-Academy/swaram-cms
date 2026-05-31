@@ -372,7 +372,7 @@ export default function ContactsTable({
                           defaultCountry="IN"
                           placeholder="Phone Number"
                           value={editingContact.phone as PhoneValue}
-                          onChange={(value) =>
+                          onChange={(value: PhoneValue) =>
                             setEditingContact((prev) => ({
                               ...prev,
                               phone: (value || "") as string,
@@ -392,7 +392,7 @@ export default function ContactsTable({
                           defaultCountry="IN"
                           placeholder="Whatsapp Number"
                           value={editingContact.whatsapp as PhoneValue}
-                          onChange={(value) =>
+                          onChange={(value: PhoneValue) =>
                             setEditingContact((prev) => ({
                               ...prev,
                               whatsapp: (value || "") as string,
@@ -519,7 +519,7 @@ export default function ContactsTable({
                     defaultCountry="IN"
                     placeholder="Phone Number"
                     value={newContact.phone as PhoneValue}
-                    onChange={(value) =>
+                    onChange={(value: PhoneValue) =>
                       setNewContact((prev) => ({
                         ...prev,
                         phone: (value || "") as string,
@@ -533,7 +533,7 @@ export default function ContactsTable({
                     defaultCountry="IN"
                     placeholder="Whatsapp Number"
                     value={newContact.whatsapp as PhoneValue}
-                    onChange={(value) =>
+                    onChange={(value: PhoneValue) =>
                       setNewContact((prev) => ({
                         ...prev,
                         whatsapp: (value || "") as string,

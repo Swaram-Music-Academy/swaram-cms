@@ -1,5 +1,35 @@
 import { supabase } from "@/lib/supabase";
 
+export type PromotionBatchOption = {
+  id: string;
+  batchId: string;
+  batchName: string;
+  courseId: string;
+  courseName: string;
+  yearNumber: number;
+  durationYears: number;
+  studentCount: number;
+};
+
+export type PromotionStudent = {
+  enrollmentId: string;
+  studentId: string;
+  firstName: string;
+  middleName: string | null;
+  lastName: string;
+  avatarUrl: string | null;
+  currentYear: number;
+  courseName: string;
+  amountDue: number;
+  pendingInstallments: number;
+  fullyPaid: boolean;
+};
+
+export type TargetBatchOption = {
+  batchId: string;
+  batchName: string;
+};
+
 export const promotionKeys = {
   batchesForPromotion: () => ["promotion", "batches"],
   studentsInBatch: (batchId: string, courseId: string, year: number) => [
@@ -20,7 +50,7 @@ export const promotionKeys = {
 
 // Fetches batches with their course+year associations and enrolled student counts
 export const promotionFns = {
-  getBatchesForPromotion: async () => {
+  getBatchesForPromotion: async (): Promise<PromotionBatchOption[]> => {
     const { data, error } = await supabase
       .from("batch_year_courses")
       .select("*, batches(*), courses(*)");
@@ -40,14 +70,16 @@ export const promotionFns = {
       countMap.set(key, (countMap.get(key) || 0) + 1);
     });
 
-    return data.map((byc) => ({
+    return data
+      .filter((byc) => byc.id && byc.batch_id && byc.course_id && byc.year_number && byc.batches && byc.courses)
+      .map((byc) => ({
       id: byc.id,
-      batchId: byc.batch_id,
+      batchId: byc.batch_id!,
       batchName: byc.batches!.name,
-      courseId: byc.course_id,
+      courseId: byc.course_id!,
       courseName: byc.courses!.name,
-      yearNumber: byc.year_number,
-      durationYears: byc.courses!.duration_years,
+      yearNumber: byc.year_number!,
+      durationYears: Number(byc.courses!.duration_years),
       studentCount:
         countMap.get(
           `${byc.batch_id}_${byc.course_id}_${byc.year_number}`
@@ -59,7 +91,7 @@ export const promotionFns = {
     batchId: string,
     courseId: string,
     year: number
-  ) => {
+  ): Promise<PromotionStudent[]> => {
     const { data, error } = await supabase
       .from("enrollments")
       .select(
@@ -122,7 +154,7 @@ export const promotionFns = {
     });
   },
 
-  getTargetBatches: async (courseId: string, targetYear: number) => {
+  getTargetBatches: async (courseId: string, targetYear: number): Promise<TargetBatchOption[]> => {
     const { data, error } = await supabase
       .from("batch_year_courses")
       .select("*, batches(*)")
@@ -134,12 +166,13 @@ export const promotionFns = {
     const seen = new Set<string>();
     return data
       .filter((b) => {
+        if (!b.batch_id || !b.batches) return false;
         if (seen.has(b.batch_id)) return false;
         seen.add(b.batch_id);
         return true;
       })
       .map((b) => ({
-        batchId: b.batch_id,
+        batchId: b.batch_id!,
         batchName: b.batches!.name,
       }));
   },
@@ -183,7 +216,7 @@ export const promotionFns = {
   undoPromotion: async (historyId: string, enrollmentIds?: string[]) => {
     const { error } = await supabase.rpc("undo_promotion", {
       p_history_id: historyId,
-      p_enrollment_ids: enrollmentIds || null,
+      p_enrollment_ids: enrollmentIds,
     });
     if (error) throw error;
   },

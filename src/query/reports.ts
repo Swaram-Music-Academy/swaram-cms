@@ -95,16 +95,16 @@ export const reportsFns = {
     if (regData && regData.length) {
       const regPendingRows = regData.filter((r) => !r.is_paid);
       const regPending = regPendingRows.reduce(
-        (a, b) => a + b.registeration_fee,
+        (a, b) => a + (b.registeration_fee || 0),
         0
       );
-      const regTotal = regData.reduce((a, b) => a + b.registeration_fee, 0);
+      const regTotal = regData.reduce((a, b) => a + (b.registeration_fee || 0), 0);
 
       const regThisMonth = regData
         .filter(
           (r) => r.is_paid && new Date(r.created_at!) >= currentMonthStart
         )
-        .reduce((a, b) => a + b.registeration_fee, 0);
+        .reduce((a, b) => a + (b.registeration_fee || 0), 0);
       // setting new values
       regObj.outstanding = regPending;
       regObj.total = regTotal;
@@ -249,8 +249,8 @@ export const reportsFns = {
     let total = 0;
     let paid = 0;
     data.forEach((r) => {
-      if (r.is_paid) paid += r.registeration_fee;
-      total += r.registeration_fee;
+      if (r.is_paid) paid += r.registeration_fee || 0;
+      total += r.registeration_fee || 0;
     });
 
     const result: RegisterationRecords[] = data
