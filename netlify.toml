@@ -1,3 +1,9 @@
+[build]
+  # Skip Netlify builds when a commit only changes docs, Supabase migrations,
+  # local Docker/dev scripts, or other non-frontend files.
+  # Exit 0 = ignore build. Exit 1 = run build.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- src public index.html package.json package-lock.json vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json tailwind.config.js postcss.config.js components.json eslint.config.js netlify.toml"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

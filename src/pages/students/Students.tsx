@@ -1,5 +1,5 @@
 import { Tables } from "@/lib/api/types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { studentFns, studentKeys } from "@/query/students";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, PlusIcon } from "lucide-react";
@@ -45,6 +45,7 @@ type StudentWithContacts = QueryData<typeof studentContactQuery>;
 export default function Students() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const {
     data: students,
     error,
@@ -96,7 +97,11 @@ export default function Students() {
   };
 
   const deleteStudentByData = async (student: StudentWithContacts) => {
-    // Delete student record
+    // Collect data needed for cleanup before deleting the student
+    const contactsList = student.students_contacts.map((r) => r.contact_id);
+    const addressId = student.address_id;
+
+    // Delete student record first (cascades will handle join table rows)
     const { error: studentError } = await supabase
       .from("students")
       .delete()
@@ -107,33 +112,38 @@ export default function Students() {
         title: "Error occurred",
         description: `Error deleting student with ID ${student.id}.`,
       });
+      return;
     }
 
-    // Delete address
-    const { error: addressError } = await supabase
-      .from("addresses")
-      .delete()
-      .eq("id", student.id);
+    // Delete address by actual address_id
+    if (addressId) {
+      const { error: addressError } = await supabase
+        .from("addresses")
+        .delete()
+        .eq("id", addressId);
 
-    if (addressError) {
-      toast({
-        title: "Error occurred",
-        description: `Error deleting address for student ID ${student.id}.`,
-      });
+      if (addressError) {
+        toast({
+          title: "Error occurred",
+          description: `Error deleting address for student ID ${student.id}.`,
+        });
+      }
     }
 
     // Delete orphan contacts
-    const contactsList = student.students_contacts.map((r) => r.contact_id);
-    const { error: contactsError } = await supabase
-      .from("contacts")
-      .delete()
-      .in("id", contactsList);
-    if (contactsError) {
-      toast({
-        title: "Error occurred",
-        description: `Error deleting contacts for student ID ${student.id}.`,
-      });
+    if (contactsList.length > 0) {
+      const { error: contactsError } = await supabase
+        .from("contacts")
+        .delete()
+        .in("id", contactsList);
+      if (contactsError) {
+        toast({
+          title: "Error occurred",
+          description: `Error deleting contacts for student ID ${student.id}.`,
+        });
+      }
     }
+
     // Delete avatar from storage if exists
     if (student.avatar_url) {
       const { error: storageError } = await supabase.storage
@@ -151,13 +161,13 @@ export default function Students() {
 
   // Method to remove student record
   const removeStudent = async (id: string) => {
-    const { data } = await supabase
+    const { data, error: fetchError } = await supabase
       .from("students")
       .select("*, students_contacts(*)")
       .eq("id", id)
       .single();
 
-    if (error || !data) {
+    if (fetchError || !data) {
       toast({
         title: "Error occurred",
         description: "Error fetching student record. Please try again.",
@@ -165,7 +175,7 @@ export default function Students() {
       return;
     }
     await deleteStudentByData(data);
-    navigate(0);
+    queryClient.invalidateQueries({ queryKey: studentKeys.getStudents() });
   };
 
   // Mthod to bulk remove records
@@ -206,11 +216,14 @@ export default function Students() {
         description: "Error deleting student records. Please try again.",
       });
     }
-    // Bulk delete address rows
-    const { error: addressError } = await supabase
-      .from("addresses")
-      .delete()
-      .in("id", ids);
+    // Bulk delete address rows by actual address_id
+    const addressIds = data
+      .filter((s) => s.address_id)
+      .map((s) => s.address_id as string);
+
+    const { error: addressError } = addressIds.length
+      ? await supabase.from("addresses").delete().in("id", addressIds)
+      : { error: null };
 
     if (addressError) {
       toast({
@@ -259,7 +272,7 @@ export default function Students() {
     });
 
     // Refetch data.
-    navigate(0);
+    queryClient.invalidateQueries({ queryKey: studentKeys.getStudents() });
     setSelectedIds(new Set());
   };
 

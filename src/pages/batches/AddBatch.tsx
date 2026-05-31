@@ -287,9 +287,9 @@ export default function AddBatch() {
                   key={index}
                   className="grid grid-cols-[3fr_3fr_3fr_1fr] gap-2 w-full"
                 >
-                  <Input type="text" value={schedule.day_of_week} disabled />
-                  <Input type="text" value={schedule.start_time} disabled />
-                  <Input type="text" value={schedule.end_time} disabled />
+                  <Input type="text" value={schedule.day_of_week ?? ""} disabled />
+                  <Input type="text" value={schedule.start_time ?? ""} disabled />
+                  <Input type="text" value={schedule.end_time ?? ""} disabled />
                   <Button
                     variant={"ghost"}
                     onClick={() => {
@@ -305,7 +305,7 @@ export default function AddBatch() {
               <div className="grid grid-cols-[3fr_3fr_3fr_1fr] gap-2 w-full">
                 {/* Day Selector */}
                 <Select
-                  value={timingSelection.day_of_week}
+                  value={timingSelection.day_of_week ?? ""}
                   onValueChange={handleDaySelector}
                 >
                   <SelectTrigger>
@@ -321,13 +321,13 @@ export default function AddBatch() {
                 </Select>
                 {/* Start Time */}
                 <TimePicker
-                  value={timingSelection.start_time}
+                  value={timingSelection.start_time ?? ""}
                   className="w-auto grow"
                   onChange={handleStartTime}
                 />
                 {/* End Time */}
                 <TimePicker
-                  value={timingSelection.end_time}
+                  value={timingSelection.end_time ?? ""}
                   className="w-auto grow"
                   onChange={handleEndTime}
                 />
@@ -362,7 +362,7 @@ export default function AddBatch() {
                             />
                             <Input
                               type="text"
-                              value={courseYear.year_number}
+                              value={courseYear.year_number ?? ""}
                               disabled
                             />
                             <Button
@@ -402,7 +402,7 @@ export default function AddBatch() {
                           {/* Year Selection */}
                           <Select
                             value={
-                              courseYearSelection.year_number === 0
+                              !courseYearSelection.year_number
                                 ? ""
                                 : courseYearSelection.year_number.toString()
                             }

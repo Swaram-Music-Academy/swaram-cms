@@ -88,10 +88,10 @@ export default function BatchDetails() {
                                   {schedule.day_of_week}
                                 </TableCell>
                                 <TableCell>
-                                  {getTimeString(schedule.start_time)}
+                                  {getTimeString(schedule.start_time ?? "")}
                                 </TableCell>
                                 <TableCell>
-                                  {getTimeString(schedule.end_time)}
+                                  {getTimeString(schedule.end_time ?? "")}
                                 </TableCell>
                               </TableRow>
                             ))}

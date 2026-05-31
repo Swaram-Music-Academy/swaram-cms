@@ -33,6 +33,9 @@ import TimeTable from "@/pages/TimeTable";
 import FeeReports from "@/pages/feeReports/FeeReports";
 import PendingInstallments from "@/pages/pending/Installments";
 import PendingRegisterationFees from "@/pages/pending/Registeration";
+import Promotions from "@/pages/promotions/Promotions";
+import PromotionHistory from "@/pages/promotions/PromotionHistory";
+import Settings from "@/pages/Settings";
 
 const router = createBrowserRouter([
   {
@@ -115,6 +118,18 @@ const router = createBrowserRouter([
                 path: "pending-registeration",
                 index: true,
                 element: <PendingRegisterationFees />,
+              },
+              {
+                path: "promotions",
+                children: [
+                  { index: true, element: <Promotions /> },
+                  { path: "history", element: <PromotionHistory /> },
+                ],
+              },
+              {
+                path: "settings",
+                index: true,
+                element: <Settings />,
               },
             ],
           },

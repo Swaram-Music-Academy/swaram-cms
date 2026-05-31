@@ -195,7 +195,7 @@ export default function EditTimings() {
                         className="grid grid-cols-[3fr_3fr_3fr_1fr] gap-2 w-full"
                       >
                         <Select
-                          value={entry.day_of_week}
+                          value={entry.day_of_week ?? ""}
                           onValueChange={(value) => editEntryDay(index, value)}
                         >
                           <SelectTrigger>
@@ -210,11 +210,11 @@ export default function EditTimings() {
                           </SelectContent>
                         </Select>
                         <TimePicker
-                          value={entry.start_time.slice(0, 5)}
+                          value={(entry.start_time ?? "").slice(0, 5)}
                           onChange={(value) => editEntryStartTime(index, value)}
                         />
                         <TimePicker
-                          value={entry.end_time.slice(0, 5)}
+                          value={(entry.end_time ?? "").slice(0, 5)}
                           onChange={(value) => editEntryEndTime(index, value)}
                         />
                         <Button
@@ -228,7 +228,7 @@ export default function EditTimings() {
                     <div className="grid grid-cols-[3fr_3fr_3fr_1fr] gap-2 w-full">
                       {/* Day of Week */}
                       <Select
-                        value={newTimingEntry.day_of_week}
+                        value={newTimingEntry.day_of_week ?? ""}
                         onValueChange={handleDaySelector}
                       >
                         <SelectTrigger>
@@ -244,13 +244,13 @@ export default function EditTimings() {
                       </Select>
                       {/* Start Time */}
                       <TimePicker
-                        value={newTimingEntry.start_time}
+                        value={newTimingEntry.start_time ?? ""}
                         className="w-auto grow"
                         onChange={handlStartTime}
                       />
                       {/* End Time */}
                       <TimePicker
-                        value={newTimingEntry.end_time}
+                        value={newTimingEntry.end_time ?? ""}
                         className="w-auto grow"
                         onChange={handlEndTime}
                       />

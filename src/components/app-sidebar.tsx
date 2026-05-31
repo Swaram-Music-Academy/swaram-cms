@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import HeroBrand from "./hero-brand";
+import { Settings } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 // This is sample data.
@@ -61,6 +63,10 @@ const data: { navMain: NavGroup[] } = {
           url: "/batches",
         },
         {
+          title: "Year Promotion",
+          url: "/promotions",
+        },
+        {
           title: "Time Table",
           url: "/time-table",
         },
@@ -104,6 +110,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </React.Fragment>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem className="flex justify-end group-data-[collapsible=icon]:justify-center">
+            <SidebarMenuButton
+              asChild
+              tooltip="Settings"
+              isActive={location.pathname === "/settings"}
+              className="h-9 w-9 justify-center p-0"
+              aria-label="Settings"
+            >
+              <a href="/settings">
+                <Settings />
+                <span className="sr-only">Settings</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

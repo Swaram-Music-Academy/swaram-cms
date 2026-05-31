@@ -36,16 +36,32 @@ export default function EditCourseFees() {
   const [feePayload, setFeePayload] = useState<FeeStructure[]>([]);
   const [updateDiff, setUpdateDiff] = useState(false);
   useEffect(() => {
-    if (courseData?.fee_structures) {
-      const payload: FeeStructure[] = courseData.fee_structures.map((fee) => ({
+    if (!courseData) return;
+
+    const existing: FeeStructure[] = (courseData.fee_structures || []).map(
+      (fee) => ({
         id: fee.id,
         year_number: fee.year_number,
         total_fee: fee.total_fee,
         course_id: fee.course_id,
-      }));
+      })
+    );
 
-      setFeePayload(payload);
+    // Create rows for any years that don't have a fee_structure yet
+    const existingYears = new Set(existing.map((f) => f.year_number));
+    for (let y = 1; y <= courseData.duration_years; y++) {
+      if (!existingYears.has(y)) {
+        existing.push({
+          year_number: y,
+          total_fee: 0,
+          course_id: courseData.id,
+        });
+      }
     }
+
+    // Sort by year
+    existing.sort((a, b) => (a.year_number ?? 0) - (b.year_number ?? 0));
+    setFeePayload(existing);
   }, [courseData]);
 
   const updateFeePayload = (index: number, value: string) => {

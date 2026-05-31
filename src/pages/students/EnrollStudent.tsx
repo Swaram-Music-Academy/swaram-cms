@@ -336,7 +336,7 @@ export default function EnrollStudent() {
                               onValueChange={(value) =>
                                 editRecordHandler(
                                   index,
-                                  "enrollment_date",
+                                  "completion_date",
                                   value
                                 )
                               }

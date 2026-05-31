@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,31 +18,38 @@ import { toast } from "@/hooks/use-toast";
 interface GeneralDetailsCardProps {
   formData: PersonalDetails | EditPersonalDetails;
   onChange: (field: string, value: string | File | Date) => void;
+  existingAvatarUrl?: string | null;
 }
 
 export default function GeneralDetailsCard({
   formData,
   onChange,
+  existingAvatarUrl,
 }: GeneralDetailsCardProps) {
   const fileUploadRef = useRef<HTMLInputElement>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [cameraLoader, setCameraLoader] = useState(false);
+
+  // Cleanup camera stream on unmount
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
   const startCamera = async () => {
     setCameraLoader(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.classList.toggle("hidden");
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-        setIsCapturing(true);
-        setAvatarPreview(null);
-      }
+      streamRef.current = stream;
+      setIsCapturing(true);
+      setAvatarPreview(null);
     } catch (error) {
-      // Turn this to toast error
       toast({
         title: "Camera Access Error",
         description: "Unable to access the camera. Please check permissions.",
@@ -52,6 +59,14 @@ export default function GeneralDetailsCard({
     }
     setCameraLoader(false);
   };
+
+  // Attach stream to video element once it's rendered
+  useEffect(() => {
+    if (isCapturing && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+      videoRef.current.play();
+    }
+  }, [isCapturing]);
 
   const capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
@@ -65,8 +80,8 @@ export default function GeneralDetailsCard({
     // Stop the camera
     const stream = video.srcObject as MediaStream;
     stream.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
     setIsCapturing(false);
-    videoRef.current.classList.toggle("hidden");
 
     // Convert to image and file
     const imageDataURL = canvasRef.current.toDataURL("image/png");
@@ -202,23 +217,33 @@ export default function GeneralDetailsCard({
             </div>
           </div>
           <div className="w-full lg:w-1/2 flex flex-col items-center gap-4">
-            <video
-              ref={videoRef}
-              className="absolute z-10 hidden rounded-full overflow-hidden border w-48 h-48 object-cover"
-              autoPlay
-              muted
-            />
-            {avatarPreview ? (
-              <img
-                src={avatarPreview}
-                alt="Avatar Preview"
-                className="w-48 h-48 object-cover rounded-full"
-              />
-            ) : (
-              <div className="w-48 h-48 rounded-full bg-secondary">
-                {cameraLoader ? <Loader /> : ""}
-              </div>
-            )}
+            <div className="relative w-48 h-48">
+              {isCapturing && (
+                <video
+                  ref={videoRef}
+                  className="absolute inset-0 z-10 rounded-full overflow-hidden border w-48 h-48 object-cover"
+                  autoPlay
+                  muted
+                />
+              )}
+              {!isCapturing && avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt="Avatar Preview"
+                  className="w-48 h-48 object-cover rounded-full"
+                />
+              ) : !isCapturing && existingAvatarUrl ? (
+                <img
+                  src={existingAvatarUrl}
+                  alt="Current Avatar"
+                  className="w-48 h-48 object-cover rounded-full"
+                />
+              ) : !isCapturing ? (
+                <div className="w-48 h-48 rounded-full bg-secondary flex items-center justify-center">
+                  {cameraLoader ? <Loader /> : ""}
+                </div>
+              ) : null}
+            </div>
 
             <div className="flex gap-4">
               <Button

@@ -26,3 +26,15 @@ dist-ssr
 
 # Environment Variables
 .env
+.env.local
+.env.sync
+
+# Database dumps
+prod_data.sql
+/tmp/prod_data_*.sql
+
+# Docker dev volumes
+.docker/
+
+# Pi local agent files
+.pi/

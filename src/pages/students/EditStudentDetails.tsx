@@ -2,7 +2,7 @@ import Loader from "@/components/Loader";
 import { studentFns, studentKeys } from "@/query/students";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import GeneralDetailsCard from "./components/GeneralDetailsCard";
 import { AddressUpdate, EditPersonalDetails } from "@/lib/types";
@@ -27,6 +27,11 @@ export default function EditStudentDetails() {
   const [editAddressPayload, setAddressPayload] = useState<
     AddressUpdate | undefined
   >();
+  const existingAvatarUrl = useMemo(() => {
+    if (!data?.avatar_url) return null;
+    return supabase.storage.from("students").getPublicUrl(data.avatar_url).data.publicUrl;
+  }, [data]);
+
   useEffect(() => {
     if (data) {
       setAddressPayload({
@@ -166,6 +171,7 @@ export default function EditStudentDetails() {
                 <GeneralDetailsCard
                   formData={editPayload}
                   onChange={handleChange}
+                  existingAvatarUrl={existingAvatarUrl}
                 />
                 <AddressCard
                   addressData={editAddressPayload!}

@@ -10,7 +10,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Tables } from "@/lib/api/types";
 import { supabase } from "@/lib/supabase";
+import { courseFns, courseKeys } from "@/query/courses";
 import { ColumnDef } from "@tanstack/react-table";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowDown01,
   ArrowDownAZ,
@@ -19,7 +21,6 @@ import {
   MoreHorizontal,
   PlusIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Course = Tables<"courses">;
@@ -27,23 +28,16 @@ type Course = Tables<"courses">;
 export default function CoursePage() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [courses, setCourses] = useState<Course[] | null>(null);
-  useEffect(() => {
-    const fetchCourses = async () => {
-      const { data, error } = await supabase.from("courses").select();
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Error occurred",
-          description: "Error occurred while fetching data, please try again.",
-        });
-        return;
-      }
-      setCourses(data);
-    };
-    fetchCourses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const queryClient = useQueryClient();
+
+  const {
+    data: courses,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: courseKeys.getCourses(),
+    queryFn: courseFns.getCoursesFn,
+  });
 
   const removeCourse = async (id: string) => {
     const { error } = await supabase.from("courses").delete().eq("id", id);
@@ -52,8 +46,9 @@ export default function CoursePage() {
         title: "Error occurred",
         description: "Error occurred while deleting course, please try again.",
       });
+      return;
     }
-    navigate(0);
+    queryClient.invalidateQueries({ queryKey: courseKeys.getCourses() });
   };
 
   // Setting columns for our datatable
@@ -160,7 +155,15 @@ export default function CoursePage() {
           Add Course
         </Button>
       </div>
-      {courses ? <DataTable columns={columns} data={courses} /> : <Loader />}
+      {isLoading ? (
+        <Loader />
+      ) : error ? (
+        <div className="w-full h-full flex items-center justify-center">
+          Something went wrong. Please try again
+        </div>
+      ) : (
+        <DataTable columns={columns} data={courses!} />
+      )}
     </>
   );
 }
