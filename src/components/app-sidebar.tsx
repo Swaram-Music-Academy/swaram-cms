@@ -41,8 +41,16 @@ const data: { navMain: NavGroup[] } = {
       url: "#",
       items: [
         {
+          title: "Dashboard",
+          url: "/dashboard",
+        },
+        {
           title: "Fee Reports",
           url: "/fee-reports",
+        },
+        {
+          title: "Expenses",
+          url: "/expenses",
         },
         {
           title: "Pending Installments",

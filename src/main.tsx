@@ -36,6 +36,8 @@ import PendingRegisterationFees from "@/pages/pending/Registeration";
 import Promotions from "@/pages/promotions/Promotions";
 import PromotionHistory from "@/pages/promotions/PromotionHistory";
 import Settings from "@/pages/Settings";
+import Expenses from "@/pages/expenses/Expenses";
+import Dashboard from "@/pages/dashboard/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -108,6 +110,16 @@ const router = createBrowserRouter([
                 path: "fee-reports",
                 index: true,
                 element: <FeeReports />,
+              },
+              {
+                path: "dashboard",
+                index: true,
+                element: <Dashboard />,
+              },
+              {
+                path: "expenses",
+                index: true,
+                element: <Expenses />,
               },
               {
                 path: "pending-installments",
