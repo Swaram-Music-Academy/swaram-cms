@@ -16,97 +16,137 @@ import HeroBrand from "./hero-brand";
 import { Settings } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
-// This is sample data.
-type NavItem = { title: string; url: string; isActive?: boolean };
-type NavGroup = { title: string; url?: string; items: NavItem[] };
+/**
+ * RBAC foundation note:
+ * Keep sidebar items grouped by app module and attach an optional permission key.
+ * Once roles/permissions are implemented, filter `item.items` using these keys
+ * before rendering. For now, all authenticated users can see all items.
+ */
+type PermissionKey =
+  | "dashboard:view"
+  | "students:manage"
+  | "courses:manage"
+  | "batches:manage"
+  | "promotions:manage"
+  | "timetable:view"
+  | "fees:reports:view"
+  | "fees:pending:view"
+  | "expenses:manage"
+  | "settings:manage";
 
-const data: { navMain: NavGroup[] } = {
-  navMain: [
-    {
-      title: "Quick Links",
-      url: "#",
-      items: [
-        {
-          title: "Students",
-          url: "/students",
-        },
-        {
-          title: "Courses",
-          url: "/courses",
-        },
-      ],
-    },
-    {
-      title: "Financials",
-      url: "#",
-      items: [
-        {
-          title: "Dashboard",
-          url: "/dashboard",
-        },
-        {
-          title: "Fee Reports",
-          url: "/fee-reports",
-        },
-        {
-          title: "Expenses",
-          url: "/expenses",
-        },
-        {
-          title: "Pending Installments",
-          url: "/pending-installments",
-        },
-        {
-          title: "Pending Registeration Fees",
-          url: "/pending-registeration",
-        },
-      ],
-    },
-    {
-      title: "Courses",
-      url: "#",
-      items: [
-        {
-          title: "Batches",
-          url: "/batches",
-        },
-        {
-          title: "Year Promotion",
-          url: "/promotions",
-        },
-        {
-          title: "Time Table",
-          url: "/time-table",
-        },
-      ],
-    },
-  ],
+type NavItem = {
+  title: string;
+  url: string;
+  permission: PermissionKey;
+};
+
+type NavGroup = {
+  title: string;
+  items: NavItem[];
+};
+
+const navGroups: NavGroup[] = [
+  {
+    title: "Overview",
+    items: [
+      {
+        title: "Dashboard",
+        url: "/dashboard",
+        permission: "dashboard:view",
+      },
+    ],
+  },
+  {
+    title: "Academy",
+    items: [
+      {
+        title: "Students",
+        url: "/students",
+        permission: "students:manage",
+      },
+      {
+        title: "Courses",
+        url: "/courses",
+        permission: "courses:manage",
+      },
+      {
+        title: "Batches",
+        url: "/batches",
+        permission: "batches:manage",
+      },
+      {
+        title: "Time Table",
+        url: "/time-table",
+        permission: "timetable:view",
+      },
+      {
+        title: "Year Promotion",
+        url: "/promotions",
+        permission: "promotions:manage",
+      },
+    ],
+  },
+  {
+    title: "Financials",
+    items: [
+      {
+        title: "Fee Reports",
+        url: "/fee-reports",
+        permission: "fees:reports:view",
+      },
+      {
+        title: "Expenses",
+        url: "/expenses",
+        permission: "expenses:manage",
+      },
+      {
+        title: "Pending Installments",
+        url: "/pending-installments",
+        permission: "fees:pending:view",
+      },
+      {
+        title: "Pending Registration Fees",
+        url: "/pending-registeration",
+        permission: "fees:pending:view",
+      },
+    ],
+  },
+];
+
+const settingsNavItem: NavItem = {
+  title: "Settings",
+  url: "/settings",
+  permission: "settings:manage",
+};
+
+const isItemActive = (pathname: string, itemUrl: string) => {
+  if (itemUrl === "/") return pathname === "/";
+  return pathname === itemUrl || pathname.startsWith(`${itemUrl}/`);
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
-  const modulePath = location.pathname.split("/")[1];
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
         <HeroBrand />
       </SidebarHeader>
       <SidebarContent>
-        {/* We create a SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
-          <React.Fragment key={item.title}>
+        {navGroups.map((group) => (
+          <React.Fragment key={group.title}>
             <Separator />
             <SidebarGroup>
               <SidebarGroupLabel className="tracking-wide font-semibold">
-                {item.title.toUpperCase()}
+                {group.title.toUpperCase()}
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {item.items.map((item) => (
+                  {group.items.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
-                        isActive={`/${modulePath}` === item.url}
+                        isActive={isItemActive(location.pathname, item.url)}
                       >
                         <a href={item.url}>{item.title}</a>
                       </SidebarMenuButton>
@@ -123,14 +163,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem className="flex justify-end group-data-[collapsible=icon]:justify-center">
             <SidebarMenuButton
               asChild
-              tooltip="Settings"
-              isActive={location.pathname === "/settings"}
+              tooltip={settingsNavItem.title}
+              isActive={isItemActive(location.pathname, settingsNavItem.url)}
               className="h-9 w-9 justify-center p-0"
-              aria-label="Settings"
+              aria-label={settingsNavItem.title}
             >
-              <a href="/settings">
+              <a href={settingsNavItem.url}>
                 <Settings />
-                <span className="sr-only">Settings</span>
+                <span className="sr-only">{settingsNavItem.title}</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
